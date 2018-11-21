@@ -6,6 +6,7 @@ import h5py
 import matplotlib.pylab as plt
 plt.switch_backend('agg')
 
+counter = 0
 
 def normalization(X):
 
@@ -126,7 +127,8 @@ def get_disc_batch(X_full_batch, X_sketch_batch, generator_model, batch_counter,
 
 
 def plot_generated_batch(X_full, X_sketch, generator_model, batch_size, image_data_format, suffix):
-
+    global counter
+    counter += 1
     # Generate images
     X_gen = generator_model.predict(X_sketch)
 
@@ -160,9 +162,8 @@ def plot_generated_batch(X_full, X_sketch, generator_model, batch_size, image_da
     if Xr.shape[-1] == 1:
         plt.imshow(Xr[:, :, 0], cmap="gray")
     else:
-        pass
         plt.imshow(Xr)
     plt.axis("off")
-    plt.savefig("../../figures/current_batch_%s.png" % suffix)
+    plt.savefig("../../figures/current_batch_%s_%d.png" % (suffix, counter))
     plt.clf()
     plt.close()

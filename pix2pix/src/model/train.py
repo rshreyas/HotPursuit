@@ -39,6 +39,7 @@ def train(**kwargs):
     label_flipping = kwargs["label_flipping"]
     dset = kwargs["dset"]
     use_mbd = kwargs["use_mbd"]
+    pretrained_model_path = kwargs["pretrained_model_path"]
 
     epoch_size = n_batch_per_epoch * batch_size
 
@@ -60,20 +61,26 @@ def train(**kwargs):
         # opt_discriminator = SGD(lr=1E-3, momentum=0.9, nesterov=True)
         opt_discriminator = Adam(lr=1E-3, beta_1=0.9, beta_2=0.999, epsilon=1e-08)
 
+        load_pretrained = False
+        if pretrained_model_path:
+            load_pretrained = True
+
         # Load generator model
         generator_model = models.load("generator_unet_%s" % generator,
                                       img_dim,
                                       nb_patch,
                                       bn_mode,
                                       use_mbd,
-                                      batch_size)
+                                      batch_size,
+                                      load_pretrained)
         # Load discriminator model
         discriminator_model = models.load("DCGAN_discriminator",
                                           img_dim_disc,
                                           nb_patch,
                                           bn_mode,
                                           use_mbd,
-                                          batch_size)
+                                          batch_size,
+                                          load_pretrained)
 
         generator_model.compile(loss='mae', optimizer=opt_discriminator)
         discriminator_model.trainable = False
